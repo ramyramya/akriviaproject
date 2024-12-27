@@ -1,0 +1,21 @@
+<mat-card>
+    <mat-card-title>Login</mat-card-title>
+    <mat-card-content>
+    <form [formGroup]="userform" (ngSubmit)="onLogin()">
+        <mat-form-field appearance="fill">
+            <mat-label>Username</mat-label>
+            <input matInput placeholder="Enter your username" required formControlName="username">
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>Password</mat-label>
+            <input matInput type="password" placeholder="Enter your password" required formControlName="password" >
+        </mat-form-field>
+        <button mat-raised-button color="primary" type="submit">Login</button>
+        <button mat-button type="reset">Reset</button>
+    </form>
+    <div class="register-link">
+        New user? <a href="signup">Register</a>
+    </div>
+    </mat-card-content>
+</mat-card>
+

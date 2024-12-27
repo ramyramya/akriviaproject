@@ -1,0 +1,32 @@
+<mat-card>
+    <mat-card-title>Register</mat-card-title>
+    <mat-card-content>
+    <form [formGroup]="userform" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="fill">
+            <mat-label>First Name</mat-label>
+            <input matInput placeholder="Enter your first name" required formControlName="firstname">
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>Last Name</mat-label>
+            <input matInput placeholder="Enter your last name" required formControlName="lastname">
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>Username</mat-label>
+            <input matInput placeholder="Enter your username" required formControlName="username" minlength="6">
+            <mat-error *ngIf="userform.controls['username']?.errors?.['minlength']">
+                Username must be at least 6 characters long.
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>Password</mat-label>
+            <input matInput type="password" placeholder="Enter your password" required formControlName="password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$">
+            <mat-error *ngIf="userform.controls['password']?.errors?.['pattern']">
+                Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.
+            </mat-error>
+        </mat-form-field>
+        <button mat-raised-button color="primary" type="submit">Sign Up</button>
+    </form>
+    </mat-card-content>
+</mat-card>
+
+
