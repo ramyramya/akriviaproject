@@ -9,7 +9,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 })
 export class SignupComponent implements OnInit {
   constructor(private http: HttpClient) { }
-  
+
 
   ngOnInit(): void {
   }
@@ -34,14 +34,15 @@ export class SignupComponent implements OnInit {
       //alert('User registered successfully!');
 
       this.http.post('http://localhost:3000/signup', userDetails)
-      .subscribe(response => {
-        alert(JSON.stringify(response));
-      }, error => {
-        console.error('Error:', error);
-        alert('An error occurred while registering the user.');
-      });
+        .subscribe({
+          next: response => {
+            alert(JSON.stringify(response));
+          }, error: error => {
+            console.error('Error:', error);
+            alert('An error occurred while registering the user.');
+          }
+        });
     }
   }
 
 }
-

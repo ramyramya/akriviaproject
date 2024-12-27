@@ -1,28 +1,32 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoginService {
 
-  constructor(private http:HttpClient) { }
+  constructor(private http: HttpClient) { }
 
-  Login(username: string, password: string): boolean {
-    const obj ={
+  Login(username: string, password: string): Observable<string> {
+    const obj = {
       username: username,
       password: password
-    }
-    //const userDetails = JSON.parse(localStorage.getItem(username) || '{}');
-    //return (userDetails.username === username && userDetails.password === password) 
-    this.http.post('http://localhost:3000/login', obj)
-    .subscribe(response => {
-      console.log(JSON.stringify(response));
-      return true;
-    }, error => {
-      console.error('Error:', error);
-      return false;
-    });
-    return true;
+    };
+
+    return this.http.post('http://localhost:3000/login', obj).pipe(
+      map(response => {
+        console.log(response);
+        return (JSON.stringify(response));
+        
+      }),
+      catchError(error => {
+        console.error('Error:', error);
+        return of("false");
+      })
+    );
   }
 }

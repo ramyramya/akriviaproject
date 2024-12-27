@@ -21,11 +21,12 @@ export class LoginComponent implements OnInit {
   onLogin() {
     const username = this.userform.value.username;
     const password = this.userform.value.password;
-    if (this.loginService.Login(username, password)) {
-      alert('Login Success');
-    }
-    else {
-      alert('Login Failed');
-    }
+    this.loginService.Login(username, password).subscribe(value => {
+      if (value) {
+        alert(value);
+      } else {
+        alert('Login failed');
+      }
+    });
   }
 }
