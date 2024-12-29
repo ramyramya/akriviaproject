@@ -17,11 +17,11 @@ export class LoginService {
       password: password
     };
 
-    return this.http.post('http://localhost:3000/login', obj).pipe(
+    return this.http.post<any>('http://localhost:3000/login', obj).pipe(
       map(response => {
         console.log(response);
-        return (JSON.stringify(response));
-        
+        //return (JSON.stringify(response));
+        return response.message;
       }),
       catchError(error => {
         console.error('Error:', error);

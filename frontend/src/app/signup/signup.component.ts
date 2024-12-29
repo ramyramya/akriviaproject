@@ -33,10 +33,10 @@ export class SignupComponent implements OnInit {
       //localStorage.setItem(userDetails.username, JSON.stringify(userDetails));
       //alert('User registered successfully!');
 
-      this.http.post('http://localhost:3000/signup', userDetails)
+      this.http.post<any>('http://localhost:3000/signup', userDetails)
         .subscribe({
           next: response => {
-            alert(JSON.stringify(response));
+            alert(response.message);
           }, error: error => {
             console.error('Error:', error);
             alert('An error occurred while registering the user.');
