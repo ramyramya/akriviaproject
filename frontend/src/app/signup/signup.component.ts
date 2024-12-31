@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-signup',
@@ -8,7 +9,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./signup.component.css']
 })
 export class SignupComponent implements OnInit {
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private route : Router) { }
 
 
   ngOnInit(): void {
@@ -37,9 +38,11 @@ export class SignupComponent implements OnInit {
         .subscribe({
           next: response => {
             alert(response.message);
+            this.route.navigateByUrl('/login');
           }, error: error => {
             console.error('Error:', error);
             alert('An error occurred while registering the user.');
+            this.userform.reset();
           }
         });
     }

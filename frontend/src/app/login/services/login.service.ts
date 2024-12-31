@@ -11,7 +11,7 @@ export class LoginService {
 
   constructor(private http: HttpClient) { }
 
-  Login(username: string, password: string): Observable<string> {
+  Login(username: string, password: string): Observable<any> {
     const obj = {
       username: username,
       password: password
@@ -21,11 +21,11 @@ export class LoginService {
       map(response => {
         console.log(response);
         //return (JSON.stringify(response));
-        return response.message;
-      }),
+        return response;
+      }), 
       catchError(error => {
         console.error('Error:', error);
-        return of("false");
+        return of({message: 'An error occurred while logging in.'});
       })
     );
   }
