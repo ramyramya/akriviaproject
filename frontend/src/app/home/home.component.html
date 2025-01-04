@@ -1,1 +1,7 @@
-<p>home works!</p>
+<h1>Welcome {{user.firstname}} {{user.lastname}}</h1>
+<p>Email : <i>{{user.email}}</i></p>
+<div *ngIf="user.dob">
+  <p>Your date of birth is {{user.dob | date}}</p>
+</div>
+
+

@@ -13,13 +13,16 @@ class User extends Model {
   static get jsonSchema() {
     return {
       type: 'object',
-      required: ['firstName', 'lastName', 'username', 'password'],
+      required: ['firstName', 'lastName','dob', 'gender', 'username', 'email', 'password'],
       properties: {
         id: { type: 'integer' },
         firstName: { type: 'string', minLength: 1, maxLength: 255 },
         lastName: { type: 'string', minLength: 1, maxLength: 255 },
+        dob: { type: 'string', format: 'date' },
+        gender: { type: 'string', enum: ['Male', 'Female', 'Other'], minLength: 1, maxLength: 255 },
         username: { type: 'string', minLength: 1, maxLength: 255 },
-        password: { type: 'string', minLength: 1, maxLength: 255 }
+        email: { type: 'string', minLength: 1, maxLength: 255 },
+        password: { type: 'string', minLength: 1, maxLength: 255 },
       }
     };
   }

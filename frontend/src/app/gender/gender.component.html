@@ -1,0 +1,7 @@
+<mat-form-field appearance="fill">
+    <mat-label>Gender</mat-label>
+    <mat-select [(value)]="value" (selectionChange)="onGenderChange($event)">
+      <mat-option *ngFor="let gender of genders" [value]="gender">{{ gender }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+

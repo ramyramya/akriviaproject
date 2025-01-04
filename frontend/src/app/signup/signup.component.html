@@ -1,32 +1,47 @@
+<p>{{userform.get('username')?.hasError('usernameExists')}}</p>
 <mat-card>
-    <mat-card-title>Register</mat-card-title>
-    <mat-card-content>
+  <mat-card-title>Register</mat-card-title>
+  <mat-card-content>
     <form [formGroup]="userform" (ngSubmit)="onSubmit()">
-        <mat-form-field appearance="fill">
-            <mat-label>First Name</mat-label>
-            <input matInput placeholder="Enter your first name" required formControlName="firstname">
-        </mat-form-field>
-        <mat-form-field appearance="fill">
-            <mat-label>Last Name</mat-label>
-            <input matInput placeholder="Enter your last name" required formControlName="lastname">
-        </mat-form-field>
-        <mat-form-field appearance="fill">
-            <mat-label>Username</mat-label>
-            <input matInput placeholder="Enter your username" required formControlName="username" minlength="6">
-            <mat-error *ngIf="userform.controls['username']?.errors?.['minlength']">
-                Username must be at least 6 characters long.
-            </mat-error>
-        </mat-form-field>
-        <mat-form-field appearance="fill">
-            <mat-label>Password</mat-label>
-            <input matInput type="password" placeholder="Enter your password" required formControlName="password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$">
-            <mat-error *ngIf="userform.controls['password']?.errors?.['pattern']">
-                Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.
-            </mat-error>
-        </mat-form-field>
-        <button mat-raised-button color="primary" type="submit">Sign Up</button>
+      <mat-form-field appearance="fill">
+        <mat-label>First Name</mat-label>
+        <input matInput placeholder="Enter your first name" formControlName="firstname">
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Last Name</mat-label>
+        <input matInput placeholder="Enter your last name" formControlName="lastname">
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label for="dob">Date of Birth</mat-label>
+        <input matInput id="dob" [matDatepicker]="picker" placeholder="Enter your date of birth" formControlName="dob">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <app-gender formControlName="gender"></app-gender>
+      <mat-form-field appearance="fill">
+        <mat-label>Username</mat-label>
+        <input matInput placeholder="Enter your username" formControlName="username">
+        <mat-error *ngIf="userform.get('username')?.hasError('usernameExists')">
+          Username already exists. Please choose another one.
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" placeholder="Enter your email" formControlName="email">
+        <mat-error *ngIf="userform.controls['email']?.errors?.['email']">
+          Please enter a valid email address.
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Password</mat-label>
+        <input matInput type="password" placeholder="Enter your password" formControlName="password">
+        <mat-error *ngIf="userform.controls['password']?.errors?.['pattern']">
+          Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.
+        </mat-error>
+      </mat-form-field>
+      <button mat-raised-button color="primary" type="submit">Register</button>
     </form>
-    </mat-card-content>
+  </mat-card-content>
 </mat-card>
 
 
