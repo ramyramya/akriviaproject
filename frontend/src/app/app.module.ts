@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { LoginComponent } from './login/login.component';
+//import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { FormsModule,ReactiveFormsModule } from '@angular/forms';
 import {MatCardModule} from '@angular/material/card';
@@ -32,7 +32,7 @@ import { APP_CONFIG } from './AppConfig/appconfig.service';
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent,
+    //LoginComponent,
     SignupComponent,
     HomeComponent,
     NavigationBarComponent,
