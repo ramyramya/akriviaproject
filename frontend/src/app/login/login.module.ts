@@ -7,10 +7,7 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {MatTableModule} from '@angular/material/table';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { APP_CONFIG } from '../AppConfig/appconfig.service';
-import { APP_CONFIG_SERVICE } from '../AppConfig/appconfig.service';
-import { RequestInterceptor } from '../request.interceptor';
+import {  HttpClientModule } from '@angular/common/http';
 import { LoginRoutingModule } from './login-routing.module';
 
 
@@ -30,18 +27,7 @@ import { LoginRoutingModule } from './login-routing.module';
     HttpClientModule,
     LoginRoutingModule
   ],
-  providers: [
-    {
-      provide: APP_CONFIG_SERVICE,
-      useValue: APP_CONFIG
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: RequestInterceptor,
-      multi: true
-    }
-  ]
+  
 })
 export class LoginModule { }
-
 

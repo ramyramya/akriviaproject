@@ -19,10 +19,12 @@ server.post('/signup', async (req, res) => {
   const { firstName, lastName, dob, gender, username, email, password } = req.body;
   try {
     const hash = await bcrypt.hash(password, saltRounds);
+    console.log(dob);
+    const utcDob = new Date(dob).toISOString(); // Convert dob to UTC
     await User.query().insert({
       firstName,
       lastName,
-      dob,
+      dob: utcDob,
       gender,
       username,
       email,
@@ -43,7 +45,7 @@ server.post('/login', async (req, res) => {
     if (user) {
       const isMatch = await bcrypt.compare(password, user.password);
       if (isMatch) {
-        const token = jwt.sign({ id: user.id }, jwtSecret, { expiresIn: '1m' });
+        const token = jwt.sign({ id: user.id }, jwtSecret, { expiresIn: '1h' });
         console.log("Token: ", token);
         res.json({ message: 'Login successful', token: token });
       } else {
@@ -131,6 +133,82 @@ server.post('/check-username', async (req, res) => {
   }
 });*/
 
+// New endpoint to get all user details
+server.get('/users', authenticateJWT, async (req, res) => {
+  try {
+    const users = await User.query().select('id', 'firstname', 'lastname', 'dob', 'gender', 'email');
+    res.send({ success: true, users });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ message: 'Error querying database' });
+  }
+});
+
+
+// New endpoint to get user details by ID
+server.get('/users/:id', authenticateJWT, async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await User.query().findById(id);
+    if (user) {
+      res.send({ success: true, user });
+    } else {
+      res.status(404).send({ message: 'User not found' });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ message: 'Error querying database' });
+  }
+});
+
+// Update user endpoint
+server.put('/users/:id', async (req, res) => {
+  const { id } = req.params;
+  const { firstName, lastName, dob, gender, username, email, password } = req.body;
+  try {
+    const user = await User.query().findById(id);
+    if (!user) {
+      return res.status(404).send({ message: 'User not found' });
+    }
+
+    const updatedUser = {
+      firstName,
+      lastName,
+      dob: new Date(dob).toISOString(), // Convert dob to UTC
+      gender,
+      username,
+      email
+    };
+
+    if (password) {
+      const hash = await bcrypt.hash(password, saltRounds);
+      updatedUser.password = hash;
+    }
+
+    await User.query().patchAndFetchById(id, updatedUser);
+    res.send({ message: 'User updated successfully' });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ message: 'Error updating user' });
+  }
+});
+
+// Delete user endpoint
+server.delete('/users/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await User.query().findById(id);
+    if (!user) {
+      return res.status(404).send({ message: 'User not found' });
+    }
+
+    await User.query().deleteById(id);
+    res.send({ message: 'User deleted successfully' });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ message: 'Error deleting user' });
+  }
+});
 
 server.listen(3000, () => {
   console.log('Server is running on port 3000');

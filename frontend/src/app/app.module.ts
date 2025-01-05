@@ -27,6 +27,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { RequestInterceptor } from './request.interceptor';
 import { APP_CONFIG_SERVICE } from './AppConfig/appconfig.service';
 import { APP_CONFIG } from './AppConfig/appconfig.service';
+import { LogoutComponent } from './logout/logout.component';
 
 
 @NgModule({
@@ -36,7 +37,8 @@ import { APP_CONFIG } from './AppConfig/appconfig.service';
     SignupComponent,
     HomeComponent,
     NavigationBarComponent,
-    GenderComponent
+    GenderComponent,
+    LogoutComponent
   ],
   imports: [
     BrowserModule,

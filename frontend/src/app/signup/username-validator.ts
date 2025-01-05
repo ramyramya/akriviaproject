@@ -17,6 +17,10 @@ export class UsernameValidator {
         return of(null); // Don't validate empty values
       }
 
+      if (!control.dirty) {
+        return of(null); // If the control is not dirty, don't validate
+      }
+      
       /*return control.valueChanges.pipe(debounceTime(1000),
         switchMap(value => {
           return this.http.post<{ exists: boolean }>('http://localhost:3000/check-username', { username: value })

@@ -18,7 +18,7 @@ class User extends Model {
         id: { type: 'integer' },
         firstName: { type: 'string', minLength: 1, maxLength: 255 },
         lastName: { type: 'string', minLength: 1, maxLength: 255 },
-        dob: { type: 'string', format: 'date' },
+        dob: { type: 'string' },
         gender: { type: 'string', enum: ['Male', 'Female', 'Other'], minLength: 1, maxLength: 255 },
         username: { type: 'string', minLength: 1, maxLength: 255 },
         email: { type: 'string', minLength: 1, maxLength: 255 },

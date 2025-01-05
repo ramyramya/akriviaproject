@@ -3,6 +3,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { LoginService } from '../login/services/login.service';
 
 @Component({
   selector: 'app-navigation-bar',
@@ -17,20 +18,9 @@ export class NavigationBarComponent {
       shareReplay()
     );
 
-  constructor(private breakpointObserver: BreakpointObserver, private router: Router) {}
+  constructor(private breakpointObserver: BreakpointObserver, private router: Router,private loginService: LoginService) {}
 
 
-  onLogout() {
-    // Perform logout logic here, e.g., clearing user session
-    const token = localStorage.getItem('token');
-    if (token) {
-      localStorage.removeItem('token');
-      alert('Logged out successfully');
-    }
-    else {
-      alert('You are not logged in');
-    }
-    this.router.navigate(['/login']);
-  }
+  
 
 }
