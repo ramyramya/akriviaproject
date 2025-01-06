@@ -4,6 +4,7 @@ import { LoginService } from './services/login.service';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
+import { login } from './login.interface';
 
 @Component({
   selector: 'app-login',
@@ -31,7 +32,7 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  handleLoginResponse(response: any) {
+  handleLoginResponse(response: login) {
     if (response.message === 'Login successful') {
       console.log("ok");
       alert(response.message);

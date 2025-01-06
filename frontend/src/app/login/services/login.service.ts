@@ -5,6 +5,7 @@ import { tap, catchError } from 'rxjs/operators';
 import {environment} from '../../../environments/environment';
 import { APP_CONFIG_SERVICE } from '../../AppConfig/appconfig.service';
 import { AppConfig } from '../../AppConfig/appconfig.interface';
+import { login } from '../login.interface';
 
 
 @Injectable({
@@ -26,7 +27,7 @@ export class LoginService {
       username: username,
       password: password
     };
-    return this.http.post<any>(`${this.config.apiEndpoint}/login`, obj).pipe(
+    return this.http.post<login>(`${this.config.apiEndpoint}/login`, obj).pipe(
       tap(response => {
         if (response.token) {
           this.token = response.token;
