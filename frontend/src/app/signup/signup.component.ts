@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy,Component, Inject, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -10,12 +10,14 @@ import { AppConfig } from '../AppConfig/appconfig.interface';
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
-  styleUrls: ['./signup.component.css']
+  styleUrls: ['./signup.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush 
 })
 export class SignupComponent implements OnInit {
   userform!: FormGroup;
   userId: number | null = null;
   isEditMode: boolean = false;
+  selectedFile: File | null = null;
 
   constructor(
     private http: HttpClient,
@@ -54,6 +56,12 @@ export class SignupComponent implements OnInit {
         this.loadUserDetails(this.userId);
       }
     });
+  }
+
+  onFileChange(event: any) {
+    if (event.target.files.length > 0) {
+      this.selectedFile = event.target.files[0];
+    }
   }
 
   loadUserDetails(userId: number): void {
@@ -112,8 +120,14 @@ export class SignupComponent implements OnInit {
       console.log(userDetails);
       console.log(userDetails['dob']);
 
+      const formData = new FormData();
+      formData.append('userDetails', JSON.stringify(userDetails));
+      if (this.selectedFile) {
+        formData.append('photo', this.selectedFile);
+      }
+
       const endpoint = this.isEditMode ? `${this.config.apiEndpoint}/users/${this.userId}` : `${this.config.apiEndpoint}/signup`;
-      const request = this.isEditMode ? this.http.put<any>(endpoint, userDetails) : this.http.post<any>(endpoint, userDetails);
+      const request = this.isEditMode ? this.http.put<any>(endpoint, userDetails) : this.http.post<any>(endpoint, formData);
 
       request.subscribe({
         next: response => {

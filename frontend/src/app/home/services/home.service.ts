@@ -5,12 +5,15 @@ import { APP_CONFIG_SERVICE } from '../../AppConfig/appconfig.service';
 import { AppConfig } from '../../AppConfig/appconfig.interface';
 
 interface User {
-  id: number;
-  firstname: string;
-  lastname: string;
-  dob: string;
-  gender: string;
-  email: string;
+  id: number|null;
+  firstname: string|null;
+  lastname: string|null;
+  dob: string|null;
+  gender: string|null;
+  username: string|null;
+  email: string|null;
+  role: string|null;
+  photo: string|null
 }
 
 @Injectable({
@@ -20,8 +23,8 @@ export class HomeService {
 
   constructor(private http: HttpClient, @Inject(APP_CONFIG_SERVICE) private config: AppConfig) { }
 
-  getLoggedInUser(): Observable<{ success: boolean, userData: User }> {
-    return this.http.get<{ success: boolean, userData: User }>(`${this.config.apiEndpoint}/home`);
+  getLoggedInUser(): Observable<{ success: boolean, userData: User, role: string }> {
+    return this.http.get<{ success: boolean, userData: User, role: string }>(`${this.config.apiEndpoint}/home`);
   }
 
   getUsers(): Observable<{ success: boolean, users: User[] }> {

@@ -9,7 +9,7 @@ import {MatInputModule} from '@angular/material/input';
 import {MatTableModule} from '@angular/material/table';
 import {  HttpClientModule } from '@angular/common/http';
 import { LoginRoutingModule } from './login-routing.module';
-
+import { MatRadioModule } from '@angular/material/radio';
 
 @NgModule({
   declarations: [
@@ -25,7 +25,8 @@ import { LoginRoutingModule } from './login-routing.module';
     MatInputModule,
     MatTableModule,
     HttpClientModule,
-    LoginRoutingModule
+    LoginRoutingModule,
+    MatRadioModule
   ],
   
 })

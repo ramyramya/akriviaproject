@@ -7,6 +7,9 @@ const jwt = require('jsonwebtoken');
 const { Model } = require('objection');
 const knex = require('./util/database');
 const User = require('./models/User');
+const Admin = require('./models/Admin')
+const multer = require('multer');
+const path = require('path');
 
 const saltRounds = 10;
 const jwtSecret = 'secret';
@@ -14,9 +17,24 @@ const jwtSecret = 'secret';
 server.use(bodyParser.json());
 server.use(cors());
 
+server.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+
+const upload = multer({ storage: storage });
+
 // Registration endpoint
-server.post('/signup', async (req, res) => {
-  const { firstName, lastName, dob, gender, username, email, password } = req.body;
+server.post('/signup', upload.single('photo'), async (req, res) => {
+  console.log('Request Body:', req.body);
+  const { firstName, lastName, dob, gender, username, email, password } = JSON.parse(req.body.userDetails);
+  const photo = req.file ? req.file.path : null;
   try {
     const hash = await bcrypt.hash(password, saltRounds);
     console.log(dob);
@@ -28,7 +46,8 @@ server.post('/signup', async (req, res) => {
       gender,
       username,
       email,
-      password: hash
+      password: hash,
+      photo
     });
     res.send({ message: 'User registered successfully' });
   } catch (err) {
@@ -39,13 +58,29 @@ server.post('/signup', async (req, res) => {
 
 // Login endpoint
 server.post('/login', async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, role } = req.body;
   try {
-    const user = await User.query().findOne({ username });
+    let user;
+    if (role === 'admin') {
+      user = await Admin.query().findOne({ username });
+    } else {
+      user = await User.query().findOne({ username });
+    }
+
     if (user) {
-      const isMatch = await bcrypt.compare(password, user.password);
+      let isMatch = false;
+      if (role === 'user') {
+        isMatch = await bcrypt.compare(password, user.password);
+      }
+      else {
+        if (password === user.password) {
+          isMatch = true;
+        }
+      }
+
       if (isMatch) {
-        const token = jwt.sign({ id: user.id }, jwtSecret, { expiresIn: '1h' });
+        const tokenPayload = role === 'admin' ? { username: user.username, role: role } : { id: user.id, role: role };
+        const token = jwt.sign(tokenPayload, jwtSecret, { expiresIn: '1h' });
         console.log("Token: ", token);
         res.json({ message: 'Login successful', token: token });
       } else {
@@ -60,7 +95,6 @@ server.post('/login', async (req, res) => {
   }
 });
 
-
 // Middleware to verify JWT token
 const authenticateJWT = (req, res, next) => {
   const token = req.headers.authorization;
@@ -71,6 +105,7 @@ const authenticateJWT = (req, res, next) => {
         return res.status(403).send({ message: 'Token expired or invalid' });
       }
       req.user = user;
+      req.role = user.role;
       console.log("UseR: ", req.user);
       next();
     });
@@ -82,15 +117,28 @@ const authenticateJWT = (req, res, next) => {
 // Protected route example
 server.get('/home', authenticateJWT, async (req, res) => {
   try {
-    id = req.user.id;
-    const result = await User.query().findById(id);
-    console.log("Result: ", result);
-    if (result) {
-      result.dob = new Date(result.dob).toISOString().split('T')[0];
-      res.send({ success: true, userData: result });
+    console.log(req.role);
+    if (req.role === "user") {
+      id = req.user.id;
+      const result = await User.query().findById(id);
+      console.log("Result: ", result);
+      if (result) {
+        result.dob = new Date(result.dob).toISOString().split('T')[0];
+        res.send({ success: true, userData: result, role: req.user.role });
+      }
+      else {
+        res.send({ success: false, userData: {} });
+      }
     }
-    else {
-      res.send({ success: false, userData: {} });
+    else if(req.role === 'admin'){
+      username = req.user.username;
+      const result = await Admin.query().findById(username);
+      if (result) {
+        res.send({ success: true, userData: result, role: req.user.role });
+      }
+      else {
+        res.send({ success: false, userData: {} });
+      }
     }
   }
   catch (err) {
@@ -164,13 +212,8 @@ server.get('/users/:id', authenticateJWT, async (req, res) => {
 // Update user endpoint
 server.put('/users/:id', async (req, res) => {
   const { id } = req.params;
-  const { firstName, lastName, dob, gender, username, email, password } = req.body;
   try {
-    const user = await User.query().findById(id);
-    if (!user) {
-      return res.status(404).send({ message: 'User not found' });
-    }
-
+    const { firstName, lastName, dob, gender, username, email, password } = req.body;
     const updatedUser = {
       firstName,
       lastName,
@@ -184,6 +227,7 @@ server.put('/users/:id', async (req, res) => {
       const hash = await bcrypt.hash(password, saltRounds);
       updatedUser.password = hash;
     }
+
 
     await User.query().patchAndFetchById(id, updatedUser);
     res.send({ message: 'User updated successfully' });

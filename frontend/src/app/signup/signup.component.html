@@ -42,6 +42,10 @@
           Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.
         </mat-error>
       </mat-form-field>
+      <div *ngIf="!isEditMode">
+        <label for="photo">Passport Size Photo</label>
+        <input type="file" id="photo" (change)="onFileChange($event)">
+      </div>
       <button mat-raised-button color="primary" type="submit">{{ isEditMode ? 'Update' : 'Register' }}</button>
     </form>
   </mat-card-content>

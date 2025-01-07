@@ -1,9 +1,19 @@
-<h1>Welcome {{user.firstname}} {{user.lastname}}</h1>
-<p>Email : <i>{{user.email}}</i></p>
-<div *ngIf="user.dob">
-  <p>Your date of birth is {{user.dob | date}}</p>
+<div *ngIf="ifUser">
+  <h1>Welcome {{user.firstname}} {{user.lastname}}</h1>
+  <p>Email : <i>{{user.email}}</i></p>
+  <div *ngIf="user.dob">
+    <p>Your date of birth is {{user.dob | date}}</p>
+  </div>
+  <div *ngIf="user.photo">
+    <img [src]="user.photo" alt="Passport Size Photo" width="400">
+  </div>
 </div>
 
+<div *ngIf="!ifUser">
+  <h1>Welcome {{user.username}}</h1>
+</div>
+
+<button type="submit" class=downloadbutton (click)="downloadFile()">download file</button>
 <table mat-table [dataSource]="users" class="mat-elevation-z8 user-table">
   <ng-container matColumnDef="id">
     <th mat-header-cell *matHeaderCellDef> ID </th>
@@ -33,14 +43,13 @@
   <ng-container matColumnDef="actions">
     <th mat-header-cell *matHeaderCellDef> Actions </th>
     <td mat-cell *matCellDef="let user">
-      <button mat-button (click)="editUser(user.id)" [disabled]="user.id !== loggedInUserId">Edit</button>
-      <button mat-button (click)="deleteUser(user.id)" [disabled]="user.id !== loggedInUserId">Delete</button>
+      <button mat-button [ngClass]="{'button-hover': !(role === 'user' && user.id !== loggedInUserId)}" (click)="editUser(user.id)"
+        [disabled]="role === 'user' && user.id !== loggedInUserId">Edit</button>
+      <button mat-button [ngClass]="{'button-hover': !(role === 'user' && user.id !== loggedInUserId)}" (click)="deleteUser(user.id,ifUser)"
+        [disabled]="role === 'user' && user.id !== loggedInUserId">Delete</button>
     </td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
-
-
-

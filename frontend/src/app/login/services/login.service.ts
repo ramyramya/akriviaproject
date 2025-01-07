@@ -22,10 +22,11 @@ export class LoginService {
     }
   }
 
-  login(username: string, password: string): Observable<any> {
+  login(username: string, password: string, role: string): Observable<any> {
     const obj = {
       username: username,
-      password: password
+      password: password,
+      role: role
     };
     return this.http.post<login>(`${this.config.apiEndpoint}/login`, obj).pipe(
       tap(response => {
