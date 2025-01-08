@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { HomeService } from './services/home.service';
 import { AppConfig } from '../AppConfig/appconfig.interface';
 import { APP_CONFIG_SERVICE } from '../AppConfig/appconfig.service';
+import { Subscription } from 'rxjs';
 
 interface User {
   id: number|null;
@@ -22,7 +23,11 @@ interface User {
   styleUrls: ['./home.component.css'],
   //changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
+  subscription !: Subscription|null;
+  getLoggedInUserSubscription !: Subscription|null;
+  getUsersSubscription !: Subscription|null;
+  deleteUserSubscription !: Subscription|null;
   user: User = {
     id: 0,
     firstname: '',
@@ -46,20 +51,17 @@ export class HomeComponent implements OnInit {
     console.log("Instantiated");
     this.getLoggedInUser();
     this.getUsers();
-  }
-  ngAfterViewInit(): void {
-    // Listen to router events
-    this.route.events.subscribe(event => {
+
+    this.subscription = this.route.events.subscribe((event) => {
       if (event instanceof NavigationEnd && event.url === '/home') {
-        console.log('Reinitializing...');
-        this.ngOnInit(); // Re-trigger your logic here
+        this.getUsers();
       }
     });
   }
 
   getLoggedInUser(): void {
     console.log("getLoggedIn user called");
-    this.homeService.getLoggedInUser().subscribe({
+    this.getLoggedInUserSubscription = this.homeService.getLoggedInUser().subscribe({
       next: response => {
         this.role = response.role;
         this.ifUser = this.role=='user' ? true : false;
@@ -93,7 +95,7 @@ export class HomeComponent implements OnInit {
   }
 
   getUsers(): void {
-    this.homeService.getUsers().subscribe({
+    this.getUsersSubscription = this.homeService.getUsers().subscribe({
       next: response => {
         if (response.success) {
           this.users = response.users;
@@ -116,7 +118,7 @@ export class HomeComponent implements OnInit {
   
 
   deleteUser(userId: number, ifUser: boolean): void {
-    this.homeService.deleteUser(userId).subscribe({
+    this.deleteUserSubscription = this.homeService.deleteUser(userId).subscribe({
       next: response => {
         //alert(response.message);
         
@@ -172,6 +174,25 @@ export class HomeComponent implements OnInit {
     ].join('\n');
   
     return csvContent;
+  }
+
+  ngOnDestroy(){
+    if(this.subscription){
+      this.subscription.unsubscribe();
+      console.log("Subscription Ended");
+    }
+    if(this.getLoggedInUserSubscription){
+      this.getLoggedInUserSubscription.unsubscribe();
+      console.log("getLoggedInUser Subscription Ended");
+    }
+    if(this.getUsersSubscription){
+      this.getUsersSubscription.unsubscribe();
+      console.log("getUsers Subscription Ended");
+    }
+    if(this.deleteUserSubscription){
+      this.deleteUserSubscription.unsubscribe();
+      console.log("Delete User Subscription Ended");
+    }
   }
   
 }

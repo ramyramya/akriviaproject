@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy,Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy,Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -6,6 +6,7 @@ import { UsernameValidator } from './username-validator';
 import { debounceTime, first, switchMap } from 'rxjs/operators';
 import { APP_CONFIG_SERVICE } from '../AppConfig/appconfig.service';
 import { AppConfig } from '../AppConfig/appconfig.interface';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-signup',
@@ -13,7 +14,10 @@ import { AppConfig } from '../AppConfig/appconfig.interface';
   styleUrls: ['./signup.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush 
 })
-export class SignupComponent implements OnInit {
+export class SignupComponent implements OnInit, OnDestroy {
+
+  private subscription : Subscription|null = null;
+  private subscription1 : Subscription|null = null;
   userform!: FormGroup;
   userId: number | null = null;
   isEditMode: boolean = false;
@@ -42,12 +46,15 @@ export class SignupComponent implements OnInit {
       ])
     });
 
-    this.userform.get('username')?.valueChanges.pipe(
-      debounceTime(1000),
-      switchMap(value => this.usernameValidator.validateUsername()(this.userform.get('username')!))
-    ).subscribe((response) => {
-      this.userform.get('username')?.setErrors(response);
-    });
+    const usernameControl = this.userform.get('username');
+    if (usernameControl) {
+      this.subscription1 = usernameControl.valueChanges.pipe(
+        debounceTime(1000),
+        switchMap(value => this.usernameValidator.validateUsername()(usernameControl))
+      ).subscribe((response) => {
+        usernameControl.setErrors(response);
+      });
+    }
 
     this.activatedRoute.queryParams.subscribe(params => {
       if (params['id']) {
@@ -129,7 +136,7 @@ export class SignupComponent implements OnInit {
       const endpoint = this.isEditMode ? `${this.config.apiEndpoint}/users/${this.userId}` : `${this.config.apiEndpoint}/signup`;
       const request = this.isEditMode ? this.http.put<any>(endpoint, userDetails) : this.http.post<any>(endpoint, formData);
 
-      request.subscribe({
+      this.subscription = request.subscribe({
         next: response => {
           alert(response.message);
           if(!this.isEditMode)
@@ -143,6 +150,17 @@ export class SignupComponent implements OnInit {
           this.userform.reset();
         }
       });
+    }
+  }
+
+  ngOnDestroy(): void{
+    if(this.subscription){
+      this.subscription.unsubscribe();
+      console.log("Unsubscribed");
+    }
+    if(this.subscription1){
+      this.subscription1.unsubscribe();
+      console.log("Username Checking is unsubscribed");
     }
   }
 }
