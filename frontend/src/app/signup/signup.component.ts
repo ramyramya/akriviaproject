@@ -22,6 +22,7 @@ export class SignupComponent implements OnInit, OnDestroy {
   userId: number | null = null;
   isEditMode: boolean = false;
   selectedFile: File | null = null;
+  hide: boolean = true;
 
   constructor(
     private http: HttpClient,
@@ -45,6 +46,7 @@ export class SignupComponent implements OnInit, OnDestroy {
         Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$')
       ])
     });
+
 
     const usernameControl = this.userform.get('username');
     if (usernameControl) {
@@ -86,6 +88,10 @@ export class SignupComponent implements OnInit, OnDestroy {
         alert('An error occurred while loading user details');
       }
     });
+  }
+
+  togglePasswordVisibility(): void {
+    this.hide = !this.hide;
   }
 
   onSubmit() {

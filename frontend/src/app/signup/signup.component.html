@@ -37,7 +37,10 @@
       </mat-form-field>
       <mat-form-field appearance="fill" *ngIf="!isEditMode">
         <mat-label>Password</mat-label>
-        <input matInput type="password" placeholder="Enter your password" formControlName="password">
+        <input matInput [type] = "hide?'password':'text'" placeholder="Enter your password" formControlName="password">
+        <button mat-icon-button matSuffix (click)="togglePasswordVisibility()" type="button">
+          <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </button>
         <mat-error *ngIf="userform.controls['password']?.errors?.['pattern']">
           Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.
         </mat-error>

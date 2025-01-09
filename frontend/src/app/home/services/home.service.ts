@@ -31,6 +31,11 @@ export class HomeService {
     return this.http.get<{ success: boolean, users: User[] }>(`${this.config.apiEndpoint}/users`);
   }
 
+  getUserById(userId: number): Observable<{ success: boolean, userData: User }> {
+    return this.http.get<{ success: boolean, userData: User}>(`${this.config.apiEndpoint}/getUser/${userId}`);
+  }
+
+
   deleteUser(userId: number): Observable<{ message: string }> {
     return this.http.delete<{ message: string }>(`${this.config.apiEndpoint}/users/${userId}`);
   }

@@ -184,7 +184,7 @@ server.post('/check-username', async (req, res) => {
 // New endpoint to get all user details
 server.get('/users', authenticateJWT, async (req, res) => {
   try {
-    const users = await User.query().select('id', 'firstname', 'lastname', 'dob', 'gender', 'email');
+    const users = await User.query().select('id', 'firstname', 'lastname', 'dob', 'gender', 'email','photo');
     res.send({ success: true, users });
   } catch (err) {
     console.log(err);
@@ -200,6 +200,23 @@ server.get('/users/:id', authenticateJWT, async (req, res) => {
     const user = await User.query().findById(id);
     if (user) {
       res.send({ success: true, user });
+    } else {
+      res.status(404).send({ message: 'User not found' });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ message: 'Error querying database' });
+  }
+});
+
+// New endpoint to get user details by ID
+server.get('/getUser/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await User.query().findById(id);
+    if (user) {
+      user.dob = new Date(user.dob).toISOString().split('T')[0];
+      res.send({ success: true, userData: user });
     } else {
       res.status(404).send({ message: 'User not found' });
     }

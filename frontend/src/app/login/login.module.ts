@@ -10,6 +10,7 @@ import {MatTableModule} from '@angular/material/table';
 import {  HttpClientModule } from '@angular/common/http';
 import { LoginRoutingModule } from './login-routing.module';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatIcon, MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { MatRadioModule } from '@angular/material/radio';
     MatTableModule,
     HttpClientModule,
     LoginRoutingModule,
-    MatRadioModule
+    MatRadioModule,
+    MatIconModule
   ],
   
 })

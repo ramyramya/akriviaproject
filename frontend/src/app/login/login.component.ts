@@ -17,10 +17,15 @@ export class LoginComponent implements OnInit {
     password: new FormControl(''),
     role: new FormControl('user'),
   });
+  hide: boolean = true;
 
   constructor(private loginService: LoginService, private route: Router) { }
 
   ngOnInit(): void {
+  }
+
+  togglePasswordVisibility(): void {
+    this.hide = !this.hide;
   }
   
   onLogin() {

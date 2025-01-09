@@ -26,6 +26,7 @@ import { LogoutComponent } from './logout/logout.component';
 import { APP_CONFIG } from './AppConfig/appconfig.service';
 import { APP_CONFIG_SERVICE } from './AppConfig/appconfig.service';
 import { RequestInterceptor } from './request.interceptor';
+import { UserViewComponent } from './home/user-view/user-view.component';
 
 
 @NgModule({
@@ -35,7 +36,8 @@ import { RequestInterceptor } from './request.interceptor';
     NavigationBarComponent,
     HomeComponent,
     GenderComponent,
-    LogoutComponent
+    LogoutComponent,
+    UserViewComponent
   ],
   imports: [
     BrowserModule,

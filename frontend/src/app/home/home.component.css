@@ -2,6 +2,9 @@
   width: 100%;
   margin-top: 20px;
   border-collapse: collapse;
+  background-color: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .mat-header-cell, .mat-cell {
@@ -11,7 +14,8 @@
 
 .mat-header-cell {
   font-weight: bold;
-  background-color: #f5f5f5;
+  background-color: #3f51b5;
+  color: white;
   border-bottom: 2px solid #e0e0e0;
 }
 
@@ -27,12 +31,12 @@
   background-color: #f1f1f1;
 }
 
-.button-hover:hover {
-  background-color: yellow;
+.button-container {
+  text-align: right;
+  margin-top: 20px;
 }
 
 .downloadbutton {
-  margin-top: 20px;
   padding: 10px 20px;
   background-color: #007bff;
   color: white;
@@ -48,4 +52,32 @@
 
 .downloadbutton:active {
   background-color: #0056b3;
+}
+
+.user-details-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.user-details {
+  flex: 1;
+}
+
+.profile-picture {
+  margin-left: 20px;
+}
+
+.profile-picture img {
+  width: 150px;
+  height: auto;
+  border-radius: 8px;
+}
+
+.table-photo {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
 }

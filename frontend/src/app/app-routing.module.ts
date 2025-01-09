@@ -6,6 +6,7 @@ import { HomeComponent } from './home/home.component';
 import { LogoutComponent } from './logout/logout.component';
 import { LoginGuard } from './guards/login.guard';
 import { SignupGuard } from './signup/guards/signup.guard';
+import { UserViewComponent } from './home/user-view/user-view.component';
 
 
 const routes: Routes = [
@@ -15,6 +16,7 @@ const routes: Routes = [
   },
   {path:'signup',component:SignupComponent, canActivate:[SignupGuard]},
   {path:'edit-user',component:SignupComponent},
+  {path: 'home/:id',component: UserViewComponent, pathMatch: 'full', canActivate: [LoginGuard]},
   {path:'home',component:HomeComponent, canActivate:[LoginGuard]},
   {path:'logout',component:LogoutComponent, canActivate:[LoginGuard]},
   {path:'',redirectTo:'/signup',pathMatch:'full'},

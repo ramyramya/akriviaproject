@@ -5,7 +5,7 @@ import { AppConfig } from '../AppConfig/appconfig.interface';
 import { APP_CONFIG_SERVICE } from '../AppConfig/appconfig.service';
 import { Subscription } from 'rxjs';
 
-interface User {
+export interface User {
   id: number|null;
   firstname: string|null;
   lastname: string|null;
@@ -43,7 +43,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   ifUser: boolean = false;
   users: User[] = [];
   loggedInUserId: number | null = null;
-  displayedColumns: string[] = ['id', 'firstname', 'lastname', 'gender', 'email', 'actions'];
+  displayedColumns: string[] = ['id', 'firstname', 'lastname', 'gender', 'email', 'photo', 'actions'];
 
   constructor(private route: Router, private homeService: HomeService, @Inject(APP_CONFIG_SERVICE) private config: AppConfig) { }
 
@@ -99,6 +99,9 @@ export class HomeComponent implements OnInit, OnDestroy {
       next: response => {
         if (response.success) {
           this.users = response.users;
+          for(let user of this.users){
+            user.photo = `${this.config.apiEndpoint}/${user.photo}`;
+          }
           console.log(this.users);
         } else {
           alert('Failed to fetch users');
@@ -116,6 +119,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     console.log(`Edit user with ID: ${userId}`);
   }
   
+
+  getUser(userId: number):void{
+    this.route.navigateByUrl(`/home/${userId}`);
+  }
 
   deleteUser(userId: number, ifUser: boolean): void {
     this.deleteUserSubscription = this.homeService.deleteUser(userId).subscribe({
