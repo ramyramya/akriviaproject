@@ -16,7 +16,7 @@ const routes: Routes = [
   },
   {path:'signup',component:SignupComponent, canActivate:[SignupGuard]},
   {path:'edit-user',component:SignupComponent},
-  {path: 'home/:id',component: UserViewComponent, pathMatch: 'full', canActivate: [LoginGuard]},
+  {path: 'user-view/:id',component: UserViewComponent, pathMatch: 'full', canActivate: [LoginGuard]},
   {path:'home',component:HomeComponent, canActivate:[LoginGuard]},
   {path:'logout',component:LogoutComponent, canActivate:[LoginGuard]},
   {path:'',redirectTo:'/signup',pathMatch:'full'},

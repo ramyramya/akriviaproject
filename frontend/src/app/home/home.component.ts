@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { HomeService } from './services/home.service';
 import { AppConfig } from '../AppConfig/appconfig.interface';
@@ -44,7 +44,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   users: User[] = [];
   loggedInUserId: number | null = null;
   displayedColumns: string[] = ['id', 'firstname', 'lastname', 'gender', 'email', 'photo', 'actions'];
-
+  
   constructor(private route: Router, private homeService: HomeService, @Inject(APP_CONFIG_SERVICE) private config: AppConfig) { }
 
   ngOnInit(): void {
@@ -58,6 +58,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       }
     });
   }
+
 
   getLoggedInUser(): void {
     console.log("getLoggedIn user called");
@@ -102,7 +103,6 @@ export class HomeComponent implements OnInit, OnDestroy {
           for(let user of this.users){
             user.photo = `data:image/png;base64,${user.photo}`; // Construct Base64 image URL
           }
-          console.log(this.users);
         } else {
           alert('Failed to fetch users');
         }
@@ -121,7 +121,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   
 
   getUser(userId: number):void{
-    this.route.navigateByUrl(`/home/${userId}`);
+    this.route.navigateByUrl(`/user-view/${userId}`);
   }
 
   deleteUser(userId: number, ifUser: boolean): void {

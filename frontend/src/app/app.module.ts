@@ -28,7 +28,6 @@ import { APP_CONFIG_SERVICE } from './AppConfig/appconfig.service';
 import { RequestInterceptor } from './request.interceptor';
 import { UserViewComponent } from './home/user-view/user-view.component';
 
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -37,7 +36,7 @@ import { UserViewComponent } from './home/user-view/user-view.component';
     HomeComponent,
     GenderComponent,
     LogoutComponent,
-    UserViewComponent
+    UserViewComponent,
   ],
   imports: [
     BrowserModule,
@@ -58,7 +57,7 @@ import { UserViewComponent } from './home/user-view/user-view.component';
     MatListModule,
     MatSelectModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
   ],
   providers: [
     {

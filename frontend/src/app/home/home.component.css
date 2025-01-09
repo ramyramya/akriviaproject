@@ -81,3 +81,11 @@
   object-fit: cover;
   border-radius: 4px;
 }
+
+
+.table-container {
+  max-height: 400px;
+  overflow-y: auto;
+  max-width: 100%;
+  overflow-x: auto;
+}
