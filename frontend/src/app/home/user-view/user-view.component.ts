@@ -36,7 +36,7 @@ export class UserViewComponent implements OnInit {
           if(response.success){
             this.user = response.userData;
             if(this.user.photo){
-              this.user.photo = `${this.config.apiEndpoint}/${this.user.photo}`
+              this.user.photo = `data:image/png;base64,${this.user.photo}`; // Construct Base64 image URL
             }
             console.log("User:" + this.user);
           }

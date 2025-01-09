@@ -72,7 +72,7 @@ export class HomeComponent implements OnInit, OnDestroy {
             this.loggedInUserId = response.userData.id;
           }          
           if (this.user.photo) {
-            this.user.photo = `${this.config.apiEndpoint}/${this.user.photo}`;
+            this.user.photo = `data:image/png;base64,${this.user.photo}`; // Construct Base64 image URL
           }
         } else {
           this.route.navigateByUrl('/login');
@@ -100,7 +100,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         if (response.success) {
           this.users = response.users;
           for(let user of this.users){
-            user.photo = `${this.config.apiEndpoint}/${user.photo}`;
+            user.photo = `data:image/png;base64,${user.photo}`; // Construct Base64 image URL
           }
           console.log(this.users);
         } else {

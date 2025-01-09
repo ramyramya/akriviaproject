@@ -8,16 +8,18 @@ const { Model } = require('objection');
 const knex = require('./util/database');
 const User = require('./models/User');
 const Admin = require('./models/Admin')
-const multer = require('multer');
-const path = require('path');
+//const multer = require('multer');
+//const path = require('path');
 
 const saltRounds = 10;
 const jwtSecret = 'secret';
 
-server.use(bodyParser.json());
+// Increase payload limit
+server.use(bodyParser.json({ limit: '5mb' })); // Adjust size as needed (e.g., 5mb, 10mb)
+server.use(bodyParser.urlencoded({ limit: '5mb', extended: true }));
 server.use(cors());
 
-server.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+/*server.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -35,6 +37,30 @@ server.post('/signup', upload.single('photo'), async (req, res) => {
   console.log('Request Body:', req.body);
   const { firstName, lastName, dob, gender, username, email, password } = JSON.parse(req.body.userDetails);
   const photo = req.file ? req.file.path : null;
+  try {
+    const hash = await bcrypt.hash(password, saltRounds);
+    console.log(dob);
+    const utcDob = new Date(dob).toISOString(); // Convert dob to UTC
+    await User.query().insert({
+      firstName,
+      lastName,
+      dob: utcDob,
+      gender,
+      username,
+      email,
+      password: hash,
+      photo
+    });
+    res.send({ message: 'User registered successfully' });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ message: 'Error storing user' });
+  }
+});*/
+// Registration endpoint
+server.post('/signup', async (req, res) => {
+  //console.log('Request Body:', req.body);
+  const { firstName, lastName, dob, gender, username, email, password, photo } = req.body;
   try {
     const hash = await bcrypt.hash(password, saltRounds);
     console.log(dob);
@@ -106,7 +132,7 @@ const authenticateJWT = (req, res, next) => {
       }
       req.user = user;
       req.role = user.role;
-      console.log("UseR: ", req.user);
+      //console.log("UseR: ", req.user);
       next();
     });
   } else {
@@ -194,7 +220,7 @@ server.get('/users', authenticateJWT, async (req, res) => {
 
 
 // New endpoint to get user details by ID
-server.get('/users/:id', authenticateJWT, async (req, res) => {
+/*server.get('/users/:id', authenticateJWT, async (req, res) => {
   const { id } = req.params;
   try {
     const user = await User.query().findById(id);
@@ -207,7 +233,7 @@ server.get('/users/:id', authenticateJWT, async (req, res) => {
     console.log(err);
     res.status(500).send({ message: 'Error querying database' });
   }
-});
+});*/
 
 // New endpoint to get user details by ID
 server.get('/getUser/:id', async (req, res) => {
@@ -230,20 +256,18 @@ server.get('/getUser/:id', async (req, res) => {
 server.put('/users/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const { firstName, lastName, dob, gender, username, email, password } = req.body;
+    const { firstName, lastName, dob, gender, username, email, photo } = req.body;
     const updatedUser = {
       firstName,
       lastName,
       dob: new Date(dob).toISOString(), // Convert dob to UTC
       gender,
       username,
-      email
+      email,
+      photo
     };
 
-    if (password) {
-      const hash = await bcrypt.hash(password, saltRounds);
-      updatedUser.password = hash;
-    }
+    
 
 
     await User.query().patchAndFetchById(id, updatedUser);

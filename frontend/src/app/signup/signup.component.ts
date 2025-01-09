@@ -7,6 +7,7 @@ import { debounceTime, first, switchMap } from 'rxjs/operators';
 import { APP_CONFIG_SERVICE } from '../AppConfig/appconfig.service';
 import { AppConfig } from '../AppConfig/appconfig.interface';
 import { Subscription } from 'rxjs';
+import { User } from '../home/home.component';
 
 @Component({
   selector: 'app-signup',
@@ -21,8 +22,21 @@ export class SignupComponent implements OnInit, OnDestroy {
   userform!: FormGroup;
   userId: number | null = null;
   isEditMode: boolean = false;
-  selectedFile: File | null = null;
+  //selectedFile: File | null = null;
   hide: boolean = true;
+  selectedFileBase64: string | null = null;
+  existing_photo: string | null = null;
+  user: User = {
+    id: 0,
+    firstname: '',
+    lastname: '',
+    dob: '',
+    gender: '',
+    username: '',
+    email: '',
+    role: '',
+    photo: ''
+  }
 
   constructor(
     private http: HttpClient,
@@ -67,17 +81,30 @@ export class SignupComponent implements OnInit, OnDestroy {
     });
   }
 
-  onFileChange(event: any) {
+  /*onFileChange(event: any) {
     if (event.target.files.length > 0) {
       this.selectedFile = event.target.files[0];
     }
-  }
+  }*/
+    onFileChange(event: any) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          this.selectedFileBase64 = e.target.result.split(',')[1]; // Get Base64 string
+        };
+        reader.readAsDataURL(file);
+      }
+    }
 
   loadUserDetails(userId: number): void {
-    this.http.get<any>(`${this.config.apiEndpoint}/users/${userId}`).subscribe({
+    this.http.get<any>(`${this.config.apiEndpoint}/getUser/${userId}`).subscribe({
       next: response => {
         if (response.success) {
-          this.userform.patchValue(response.user);
+          this.user = response.userData;
+          this.existing_photo = this.user.photo;
+          this.user.photo = `data:image/png;base64,${this.user.photo}`; // Construct Base64 image URL
+          this.userform.patchValue(response.userData);
           this.userform.get('password')?.clearValidators();
           this.userform.get('password')?.updateValueAndValidity();
         } else {
@@ -113,7 +140,8 @@ export class SignupComponent implements OnInit, OnDestroy {
         gender: this.userform.value.gender,
         username: this.userform.value.username,
         email: this.userform.value.email,
-        password: this.userform.value.password
+        password: this.userform.value.password,
+        photo: this.selectedFileBase64
       }}
       else{
         userDetails = {
@@ -127,20 +155,21 @@ export class SignupComponent implements OnInit, OnDestroy {
           })(),          
           gender: this.userform.value.gender,
           username: this.userform.value.username,
-          email: this.userform.value.email
+          email: this.userform.value.email,
+          photo: this.selectedFileBase64 ? this.selectedFileBase64 : this.existing_photo
       }
     }
       console.log(userDetails);
       console.log(userDetails['dob']);
 
-      const formData = new FormData();
+      /*const formData = new FormData();
       formData.append('userDetails', JSON.stringify(userDetails));
       if (this.selectedFile) {
         formData.append('photo', this.selectedFile);
-      }
+      }*/
 
       const endpoint = this.isEditMode ? `${this.config.apiEndpoint}/users/${this.userId}` : `${this.config.apiEndpoint}/signup`;
-      const request = this.isEditMode ? this.http.put<any>(endpoint, userDetails) : this.http.post<any>(endpoint, formData);
+      const request = this.isEditMode ? this.http.put<any>(endpoint, userDetails) : this.http.post<any>(endpoint, userDetails);
 
       this.subscription = request.subscribe({
         next: response => {
